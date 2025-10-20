@@ -5,41 +5,44 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import { MainNavigation } from './src/MainNavigation/MainNavigation.tsx';
+import { ThemeProvider } from './src/theme/ThemeContext.tsx';
+import { StatusBar } from 'react-native';
+import { LanguageProvider } from './src/context/LanguageContext.tsx';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useEffect } from 'react';
+import { configureGoogleSignIn } from './src/firebase/config.ts';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store.ts';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+const App = () => {
+  useEffect(() => {
+    // Initialize Google Sign-In when app starts
+    configureGoogleSignIn();
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <Provider store={store}>
+          <ThemeProvider>
+            <LanguageProvider>
+              <NavigationContainer>
+                <StatusBar
+                  translucent
+                  backgroundColor="transparent"
+                  barStyle="dark-content"
+                />
+                <MainNavigation />
+              </NavigationContainer>
+            </LanguageProvider>
+          </ThemeProvider>
+        </Provider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+};
 
 export default App;

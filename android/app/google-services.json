@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "466950805571",
+    "project_id": "little-believer",
+    "storage_bucket": "little-believer.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466950805571:android:64b4b46a1bdc437196dcf6",
+        "android_client_info": {
+          "package_name": "com.littlebeliever"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466950805571-ut9nt0a2pmukati5slepo7nkff499i79.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.littlebeliever",
+            "certificate_hash": "d36d4551fa322bd3625b1fc40ae198270bcd2aa1"
+          }
+        },
+        {
+          "client_id": "466950805571-87ili3c30q1mstppkrlvdr0jal4cme05.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5Sn4sdw9KoPN4A3-f-rV6prP4MUfO09c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466950805571-87ili3c30q1mstppkrlvdr0jal4cme05.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "466950805571-o94gsp10oqsiic3upughc8ibr7omm6bl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "Little-Believer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
