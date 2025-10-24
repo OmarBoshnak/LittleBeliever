@@ -5,6 +5,9 @@ export const Routes = {
   AuthScreen: 'AuthScreen',
   SubscriberScreen: 'SubscriberScreen',
   HomeScreen: 'HomeScreen',
+  LearnIslamScreen: 'LearnIslamScreen',
+  ArkanAlIslamScreen: 'ArkanAlIslamScreen',
+  WuduScreen: 'WuduScreen',
 } as const;
 
 export type RootstackParamList = {
@@ -14,4 +17,7 @@ export type RootstackParamList = {
   AuthScreen: undefined;
   SubscriberScreen: undefined;
   HomeScreen: undefined;
+  LearnIslamScreen: undefined;
+  ArkanAlIslamScreen: undefined;
+  WuduScreen: undefined;
 };

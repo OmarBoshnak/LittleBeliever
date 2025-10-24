@@ -487,7 +487,7 @@ export const translations: Record<'en' | 'ar', Translations> = {
     tafsirTitle: 'Tafsir (Explanation)',
     close: 'Close',
     unlockQuran:
-      "Unlock full Qur'an reading with your AI helper for only 50 EGP/month 🌙",
+      "Unlock full Qur'an reading with your AI helper for only \n 50 EGP/month 🌙",
     lockedSurah: 'This Surah is locked',
     tryAnotherVerse: 'Try Another Verse',
     playAudio: 'Play Audio',
@@ -588,7 +588,7 @@ export const translations: Record<'en' | 'ar', Translations> = {
     prayerCompleteMessage: "Excellent! You've learned how to pray!",
     startPrayer: 'Start Prayer Practice',
     unlockFullLessons:
-      'Unlock all lessons with Premium for only 50 EGP/month! 🌟',
+      'Unlock all lessons with Premium for only \n 50 EGP/month! 🌟',
   },
 
   ar: {
@@ -859,7 +859,7 @@ export const translations: Record<'en' | 'ar', Translations> = {
     previousStep: 'الخطوة السابقة',
     restart: 'ابدأ من جديد',
     wuduDua:
-      'أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
+      'أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُه',
 
     // Prayer Steps
     prayerIntro: 'تعلم كيفية أداء الصلاة. اتبع كل خطوة بعناية!',
@@ -886,7 +886,7 @@ export const translations: Record<'en' | 'ar', Translations> = {
     prayerCompleteMessage: 'ممتاز! لقد تعلمت كيفية الصلاة!',
     startPrayer: 'ابدأ تمرين الصلاة',
     unlockFullLessons:
-      'افتح جميع الدروس مع الاشتراك المميز مقابل 50 جنيه/شهر فقط! 🌟',
+      'افتح جميع الدروس مع الاشتراك المميز مقابل \n 50 جنيه/شهر فقط! 🌟',
   },
 };
 

@@ -59,6 +59,7 @@ export interface ThemeColors {
   sidebarBorder: string;
 
   gradient: string[];
+  HEADER_GRADIENT: string[];
 }
 
 /**
@@ -96,6 +97,7 @@ export const lightTheme: ThemeColors = {
   sidebarBorder: 'rgba(126, 196, 207, 0.2)',
 
   gradient: ['#7EC4CF', '#F9D9A7', '#FFC9D4'],
+  HEADER_GRADIENT: ['#B4E4FF', '#A7D5DD', '#7EC4CF'],
 };
 
 /**
@@ -105,11 +107,11 @@ export const lightTheme: ThemeColors = {
  */
 export const girlTheme: ThemeColors = {
   ...lightTheme, // Inherit base light theme
-  primary: '#ffc9d4',
+  primary: '#FF66B3',
   primaryForeground: '#ffffff',
-  secondary: '#e8b4d9',
+  secondary: '#C77DFF',
   secondaryForeground: '#4a5568',
-  accent: '#f9a8d4',
+  accent: '#FFD6E0',
   accentForeground: '#4a5568',
   chart1: '#ffc9d4',
   chart2: '#e8b4d9',
@@ -117,7 +119,8 @@ export const girlTheme: ThemeColors = {
   chart4: '#fde2ec',
   chart5: '#f3d4e8',
 
-  gradient: ['#FFC9D4', '#E8B4D9', '#F9A8D4'],
+  gradient: ['#FFE6F7', '#FFB3C6', '#C77DFF'],
+  HEADER_GRADIENT: ['#B4E4FF', '#A7D5DD', '#7EC4CF'],
 };
 
 /**

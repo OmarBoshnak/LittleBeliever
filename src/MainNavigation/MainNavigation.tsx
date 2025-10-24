@@ -6,6 +6,9 @@ import { OnBoardingScreen } from '../screen/OnBoardingScreen/OnBoardingScreen.ts
 import { AuthScreen } from '../screen/AuthScreen/AuthScreen.tsx';
 import { SubscriptionScreen } from '../screen/SubscriptionScreen/SubscriptionScreen.tsx';
 import { HomeScreen } from '../screen/HomeScreen/HomeScreen.tsx';
+import { ArkanAlIslamScreen } from '../screen/HomeScreen/LearnIslam/ArkanAlIslamScreen.tsx';
+import { LearnIslamScreen } from '../screen/HomeScreen/LearnIslam/LearnIsalmScreen.tsx';
+import { WuduScreen } from '../screen/HomeScreen/LearnIslam/WuduScreen.tsx';
 
 const Stack = createNativeStackNavigator<RootstackParamList>();
 
@@ -40,6 +43,21 @@ export const MainNavigation = () => {
       <Stack.Screen
         name={Routes.HomeScreen}
         component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={Routes.LearnIslamScreen}
+        component={LearnIslamScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={Routes.ArkanAlIslamScreen}
+        component={ArkanAlIslamScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={Routes.WuduScreen}
+        component={WuduScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

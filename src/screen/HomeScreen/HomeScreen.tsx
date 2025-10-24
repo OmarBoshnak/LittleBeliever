@@ -1,19 +1,34 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
-import {useTheme} from '../../theme/ThemeContext.tsx';
-import {useLanguage} from '../../context/LanguageContext.tsx';
-import {Card} from '../../component/Card.tsx';
-import {borderRadius, fontSize, fontWeight, spacing,} from '../../theme/spacing.ts';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../theme/ThemeContext.tsx';
+import { useLanguage } from '../../context/LanguageContext.tsx';
+import { Card } from '../../component/Card.tsx';
+import { borderRadius, fontSize, fontWeight, spacing } from '../../theme/spacing.ts';
 import GradientBackground from '../../component/GradientBackground.tsx';
-import {BookOpen, Heart, Moon, Settings, Sparkles, Star, User, Users,} from 'lucide-react-native';
-import {SafeAreaView, useSafeAreaInsets,} from 'react-native-safe-area-context';
-import {useTwinkleAnimation} from '../../hooks/useAnimatedValue.ts';
+import { BookOpen, Heart, Moon, Settings, Sparkles, Star, User, Users } from 'lucide-react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTwinkleAnimation } from '../../hooks/useAnimatedValue.ts';
 import Animated from 'react-native-reanimated';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootstackParamList, Routes } from '../../MainNavigation/Routes.tsx';
+import { useNavigation } from '@react-navigation/core';
+import React from 'react';
 
 /**
  * HomeScreen Component
  */
+const HEADER_GRADIENT = ['#a7d5dd33', '#f5ebe033', '#f9d9a733'];
 
-const AnimatedStar: React.FC<{
+type NavigationProps = NativeStackNavigationProp<RootstackParamList>;
+
+const AnimatedStar = ({
+  size,
+  color,
+  top,
+  left,
+  right,
+  bottom,
+  delay,
+}: {
   size: number;
   color: string;
   top?: number;
@@ -21,7 +36,7 @@ const AnimatedStar: React.FC<{
   right?: number;
   bottom?: number;
   delay: number;
-}> = ({ size, color, top, left, right, bottom, delay }) => {
+}) => {
   const animatedStar = useTwinkleAnimation(delay);
 
   return (
@@ -48,10 +63,10 @@ interface MainCard {
   iconColor: string;
 }
 
-export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
+export const HomeScreen = () => {
   const { colors } = useTheme();
-  const { t } = useLanguage();
-
+  const { t, isRTL } = useLanguage();
+  const navigation = useNavigation<NavigationProps>();
   const insets = useSafeAreaInsets();
   /**
    * Main navigation cards
@@ -106,6 +121,15 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
     },
   ];
 
+  const handleCardPress = (cardId: string) => {
+    switch (cardId) {
+      case 'learn-islam':
+        return navigation.navigate(Routes.LearnIslamScreen);
+      default:
+        break;
+    }
+  };
+
   /**
    * Render individual navigation card
    */
@@ -116,7 +140,7 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
       <TouchableOpacity
         key={card.id}
         activeOpacity={0.7}
-        onPress={() => {}}
+        onPress={() => handleCardPress(card.id)}
         style={styles.cardTouchable}
       >
         <Card style={[styles.card, { backgroundColor: card.color }]}>
@@ -133,7 +157,10 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
               <Text
                 style={[
                   styles.cardTitle,
-                  { color: colors.secondaryForeground },
+                  {
+                    color: colors.secondaryForeground,
+                    textAlign: isRTL ? 'right' : 'left',
+                  },
                 ]}
               >
                 {card.title}
@@ -141,7 +168,10 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
               <Text
                 style={[
                   styles.cardDescription,
-                  { color: colors.mutedForeground },
+                  {
+                    color: colors.mutedForeground,
+                    textAlign: isRTL ? 'right' : 'left',
+                  },
                 ]}
               >
                 {card.description}
@@ -170,10 +200,14 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
             styles.header,
             {
               paddingTop: insets.top + spacing.md,
-              backgroundColor: `${colors.primary}15`,
             },
           ]}
         >
+          <GradientBackground
+            colors={colors.gradient}
+            style={[StyleSheet.absoluteFillObject, styles.gradient]}
+          />
+
           {/* Decorative Stars */}
 
           <AnimatedStar
@@ -207,11 +241,24 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
 
           {/* Greeting */}
           <View style={styles.greetingContainer}>
-            <Text style={[styles.greeting, { color: colors.foreground }]}>
+            <Text
+              style={[
+                styles.greeting,
+                {
+                  color: colors.foreground,
+                  textAlign: isRTL ? 'right' : 'left',
+                },
+              ]}
+            >
               {t.greeting},
             </Text>
-            <Text style={[styles.userName, { color: colors.primary }]}>
-              {userName}!
+            <Text
+              style={[
+                styles.userName,
+                { color: colors.primary, textAlign: isRTL ? 'right' : 'left' },
+              ]}
+            >
+              {}!
             </Text>
           </View>
         </View>
@@ -251,6 +298,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 48,
     overflow: 'hidden',
     marginBottom: 70,
+  },
+  gradient: {
+    top: 0,
+    height: 250,
+    borderBottomLeftRadius: 48,
+    borderBottomRightRadius: 48,
   },
   // Decorative Stars (animated in real app)
   star: {

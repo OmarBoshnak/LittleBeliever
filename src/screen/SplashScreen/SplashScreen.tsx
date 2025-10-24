@@ -18,7 +18,15 @@ const { width, height } = Dimensions.get('window');
 
 type NavigationProps = NativeStackNavigationProp<RootstackParamList>;
 
-const AnimatedStar: React.FC<{
+const AnimatedStar = ({
+  size,
+  color,
+  top,
+  left,
+  right,
+  bottom,
+  delay,
+}: {
   size: number;
   color: string;
   top?: number;
@@ -26,15 +34,12 @@ const AnimatedStar: React.FC<{
   right?: number;
   bottom?: number;
   delay: number;
-}> = ({ size, color, top, left, right, bottom, delay }) => {
-  const animatedStyle = useTwinkleAnimation(delay);
+}) => {
+  const animatedStar = useTwinkleAnimation(delay);
+
   return (
     <Animated.View
-      style={[
-        styles.absoluteIcon,
-        { top, left, right, bottom },
-        animatedStyle, // ✅ apply animated style
-      ]}
+      style={[{ position: 'absolute', top, left, right, bottom }, animatedStar]}
     >
       <Star size={size} color={color} fill={color} />
     </Animated.View>

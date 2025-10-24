@@ -8,6 +8,7 @@ interface GradientBackgroundProps {
   end?: { x: number; y: number };
   style?: StyleProp<ViewStyle>;
   opacity?: number;
+  children?: React.ReactNode;
 }
 
 const GradientBackground = ({
@@ -16,7 +17,8 @@ const GradientBackground = ({
   start = { x: 0, y: 0 },
   end = { x: 1, y: 1 },
   style,
-  opacity = 0.4,
+  opacity = 0.5,
+  children,
 }: GradientBackgroundProps) => {
   return (
     <LinearGradient
@@ -25,7 +27,9 @@ const GradientBackground = ({
       start={start}
       end={end}
       style={[styles.gradient, style, { opacity: opacity }]}
-    ></LinearGradient>
+    >
+      {children}
+    </LinearGradient>
   );
 };
 
