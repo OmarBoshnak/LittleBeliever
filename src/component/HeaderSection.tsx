@@ -16,12 +16,14 @@ type HeaderSectionProps = {
   children?: React.ReactNode;
   color: string[];
   style?: ViewStyle;
+  opacity?: number;
 };
 
 export const HeaderSection = ({
   children,
   color,
   style,
+  opacity,
 }: HeaderSectionProps) => {
   const { colors } = useTheme();
   const { t } = useLanguage();
@@ -34,7 +36,8 @@ export const HeaderSection = ({
     >
       <GradientBackground
         colors={color}
-        style={[StyleSheet.absoluteFillObject, styles.gradient]}
+        opacity={opacity}
+        style={[StyleSheet.absoluteFillObject, styles.gradient, style]}
       />
       <TouchableOpacity
         accessibilityLabel={t.back ?? 'Go Back'}

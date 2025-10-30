@@ -62,32 +62,42 @@ export interface ThemeColors {
   HEADER_GRADIENT: string[];
 }
 
+export const opacity = (hex: string, alpha: number) => {
+  // alpha: 0..1
+  const a = Math.max(0, Math.min(1, alpha));
+  const bigint = parseInt(hex.replace('#', ''), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+};
+
 /**
  * Light Spacing (Default)
  */
 export const lightTheme: ThemeColors = {
-  background: '#fdfcf8',
-  foreground: '#4a5568',
+  background: '#FAFAFE',
+  foreground: '#1C1C28',
   card: '#ffffff',
-  cardForeground: '#4a5568',
-  primary: '#7ec4cf',
+  cardForeground: '#1C1C28',
+  primary: '#2CB3BF',
   primaryForeground: '#ffffff',
-  secondary: '#f9d9a7',
+  secondary: '#7AA8FF',
   secondaryForeground: '#4a5568',
-  muted: '#f7f3ed',
-  mutedForeground: '#9ca3af',
-  accent: '#ffc9d4',
+  muted: '#F2F3F7',
+  mutedForeground: '#6B7280',
+  accent: '#F6B74A',
   accentForeground: '#4a5568',
   destructive: '#ef4444',
   destructiveForeground: '#ffffff',
-  border: 'rgba(126, 196, 207, 0.2)',
+  border: '#E6E8EF',
   input: 'transparent',
   inputBackground: '#f9f5f0',
-  chart1: '#7ec4cf',
-  chart2: '#f9d9a7',
-  chart3: '#ffc9d4',
-  chart4: '#b4e4ed',
-  chart5: '#fde7c7',
+  chart1: '#7EC4CF',
+  chart2: '#A7D5DD',
+  chart3: '#F9D9A7',
+  chart4: '#95D5F8',
+  chart5: '#D4E6A5',
   sidebar: '#ffffff',
   sidebarForeground: '#4a5568',
   sidebarPrimary: '#7ec4cf',
@@ -96,8 +106,12 @@ export const lightTheme: ThemeColors = {
   sidebarAccentForeground: '#4a5568',
   sidebarBorder: 'rgba(126, 196, 207, 0.2)',
 
-  gradient: ['#7EC4CF', '#F9D9A7', '#FFC9D4'],
-  HEADER_GRADIENT: ['#B4E4FF', '#A7D5DD', '#7EC4CF'],
+  gradient: [
+    opacity('#A7D5DD', 0.8),
+    opacity('#F5EBE0', 0.8),
+    opacity('#F9D9A7', 0.8),
+  ],
+  HEADER_GRADIENT: ['#A7D5DD', '#7EC4CF'],
 };
 
 /**
@@ -107,20 +121,24 @@ export const lightTheme: ThemeColors = {
  */
 export const girlTheme: ThemeColors = {
   ...lightTheme, // Inherit base light theme
-  primary: '#FF66B3',
+  primary: '#FF74A6',
   primaryForeground: '#ffffff',
-  secondary: '#C77DFF',
+  secondary: '#C9B6F0',
   secondaryForeground: '#4a5568',
-  accent: '#FFD6E0',
+  accent: '#FFC36A',
   accentForeground: '#4a5568',
-  chart1: '#ffc9d4',
-  chart2: '#e8b4d9',
-  chart3: '#f9a8d4',
-  chart4: '#fde2ec',
-  chart5: '#f3d4e8',
+  chart1: '#FFC8DD',
+  chart2: '#FFAFCC',
+  chart3: '#C9B6F0',
+  chart4: '#BDE0FE',
+  chart5: '#B8E1DD',
 
-  gradient: ['#FFE6F7', '#FFB3C6', '#C77DFF'],
-  HEADER_GRADIENT: ['#B4E4FF', '#A7D5DD', '#7EC4CF'],
+  gradient: [
+    opacity('#FFC8DD', 0.6),
+    opacity('#EDE7F6', 0.6),
+    opacity('#FFAFCC', 0.6),
+  ],
+  HEADER_GRADIENT: [opacity('#FFC8DD', 0.8), opacity('#FFAFCC', 0.8)],
 };
 
 /**

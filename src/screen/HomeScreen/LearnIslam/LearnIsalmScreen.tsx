@@ -67,7 +67,7 @@ export const LearnIslamScreen = () => {
         subtitle: t.wuduSubtitle,
         emoji: '💧',
         gradient: ['#B4E4FF', '#4CC9F0'],
-        iconColor: '#95d5f8',
+        iconColor: '#c9e7f6',
         Icon: Droplets,
       },
       {
@@ -84,10 +84,15 @@ export const LearnIslamScreen = () => {
   );
 
   const handleSectionPress = (sectionId: Section['id']) => {
-    if (sectionId === 'arkan-islam') {
-      navigation.navigate(Routes.ArkanAlIslamScreen);
-    } else if (sectionId === 'wudu') {
-      navigation.navigate(Routes.WuduScreen);
+    switch (sectionId) {
+      case 'arkan-islam':
+        return navigation.navigate(Routes.ArkanAlIslamScreen);
+      case 'wudu':
+        return navigation.navigate(Routes.WuduScreen);
+      case 'prayer':
+        return navigation.navigate(Routes.PrayScreen);
+      default:
+        break;
     }
   };
 
@@ -215,7 +220,7 @@ export const LearnIslamScreen = () => {
             accessibilityLabel={t.back ?? 'Go Back'}
             style={[styles.backButton, { backgroundColor: `${colors.card}80` }]}
             activeOpacity={0.8}
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.replace(Routes.HomeScreen)}
           >
             <ArrowLeft size={20} color={colors.foreground} />
           </TouchableOpacity>

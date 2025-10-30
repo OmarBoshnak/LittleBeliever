@@ -152,6 +152,19 @@ export interface Translations {
   // Prayer Steps
   prayerIntro: string;
   rakat: string;
+  prayerOverview: string;
+  prayerOverviewDescription: string;
+  letsLearnPrayer: string;
+  fajrPrayer: string;
+  dhuhrPrayer: string;
+  asrPrayer: string;
+  maghribPrayer: string;
+  ishaPrayer: string;
+  rakatCount: string;
+  sujudPerRakat: string;
+  totalSujud: string;
+  intentionPray: string;
+  intentionDescriptionPray: string;
   takbir: string;
   takbirDescription: string;
   standing: string;
@@ -559,7 +572,22 @@ export const translations: Record<'en' | 'ar', Translations> = {
     // Prayer Steps
     prayerIntro:
       'Learn how to perform Salah, the Islamic prayer. Follow each step carefully!',
+    prayerOverview: 'Daily Prayer Overview',
+    prayerOverviewDescription:
+      "Every rakʿah has two sujūd (prostrations). Let's see how many we do in each prayer!",
     rakat: 'Rakat',
+    letsLearnPrayer: "Let's learn how to pray step by step!",
+    fajrPrayer: 'Fajr',
+    dhuhrPrayer: 'Dhuhr',
+    asrPrayer: 'Asr',
+    maghribPrayer: 'Maghrib',
+    ishaPrayer: 'Isha',
+    rakatCount: 'Rakʿāt',
+    sujudPerRakat: 'Sujūd/Rakʿah',
+    totalSujud: 'Total Sujūd',
+    intentionPray: 'Niyyah (Intention)',
+    intentionDescriptionPray:
+      'Before you start the prayer, intend in your heart which prayer you will perform, like: “I intend to pray Dhuhr for Allah.” Do not say it out loud.',
     takbir: 'Takbir',
     takbirDescription:
       "Raise your hands and say 'Allahu Akbar' (Allah is the Greatest)",
@@ -864,6 +892,21 @@ export const translations: Record<'en' | 'ar', Translations> = {
     // Prayer Steps
     prayerIntro: 'تعلم كيفية أداء الصلاة. اتبع كل خطوة بعناية!',
     rakat: 'ركعة',
+    prayerOverview: 'نظرة عامة على الصلوات اليومية',
+    prayerOverviewDescription:
+      'كل ركعة فيها سجدتان، هيا نرى كم سجدة في كل صلاة!',
+    letsLearnPrayer: 'لنَتَعَلَّم الصلاة خطوة بخطوة!',
+    fajrPrayer: 'الفجر',
+    dhuhrPrayer: 'الظهر',
+    asrPrayer: 'العصر',
+    maghribPrayer: 'المغرب',
+    ishaPrayer: 'العشاء',
+    rakatCount: 'عدد الركعات',
+    sujudPerRakat: 'السجدات في كل ركعة',
+    totalSujud: 'إجمالي السجدات',
+    intentionPray: 'النيّة',
+    intentionDescriptionPray:
+      'قبل أن تبدأ الصلاة، انوِ في قلبك الصلاة التي ستؤديها، مثل: “نويت أن أصلي الظهر لله تعالى”. بدون التلفظ بها بالصوت.',
     takbir: 'التكبير',
     takbirDescription: "ارفع يديك وقل 'الله أكبر'",
     standing: 'القيام',
