@@ -84,6 +84,15 @@ export const HomeScreen = () => {
       iconColor: colors.secondary,
     },
     {
+      id: 'quran-reading',
+      title: t.quranReading,
+      description: t.quranPractice,
+      icon: BookOpen, // Book for Quran
+      color: `${colors.chart4}20`,
+      iconBg: `${colors.primaryForeground}60`,
+      iconColor: colors.primary,
+    },
+    {
       id: 'prophets',
       title: t.prophetsTitle,
       description: t.prophetsDescription,
@@ -110,21 +119,14 @@ export const HomeScreen = () => {
       iconBg: `${colors.primaryForeground}60`,
       iconColor: colors.chart3,
     },
-    {
-      id: 'quran-reading',
-      title: t.quranReading,
-      description: t.quranPractice,
-      icon: BookOpen, // Book for Quran
-      color: `${colors.chart4}20`,
-      iconBg: `${colors.primaryForeground}60`,
-      iconColor: colors.primary,
-    },
   ];
 
   const handleCardPress = (cardId: string) => {
     switch (cardId) {
       case 'learn-islam':
         return navigation.navigate(Routes.LearnIslamScreen);
+      case 'quran-reading':
+        return navigation.navigate(Routes.QuranIndexScreen);
       default:
         break;
     }

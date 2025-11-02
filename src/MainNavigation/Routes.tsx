@@ -9,6 +9,7 @@ export const Routes = {
   ArkanAlIslamScreen: 'ArkanAlIslamScreen',
   WuduScreen: 'WuduScreen',
   PrayScreen: 'PrayScreen',
+  QuranIndexScreen: 'QuranIndexScreen',
 } as const;
 
 export type RootstackParamList = {
@@ -22,4 +23,5 @@ export type RootstackParamList = {
   ArkanAlIslamScreen: undefined;
   WuduScreen: undefined;
   PrayScreen: undefined;
+  QuranIndexScreen: undefined;
 };

@@ -266,6 +266,8 @@ export interface Translations {
   // Quran Reading Screen
   quranReading: string;
   quranPractice: string;
+  quranLibrary: string;
+  quranLibrarySubtitle: string;
   selectSurah: string;
   surahAlFatiha: string;
   surahAlIkhlas: string;
@@ -481,6 +483,8 @@ export const translations: Record<'en' | 'ar', Translations> = {
     // Quran Reading Screen
     quranReading: "Qur'an Reading",
     quranPractice: "Practice Qur'an Reading",
+    quranLibrary: "Qur'an Library",
+    quranLibrarySubtitle: 'Browse by Juz, search, and pick a surah',
     selectSurah: 'Select a Surah',
     surahAlFatiha: 'Al-Fatiha',
     surahAlIkhlas: 'Al-Ikhlas',
@@ -592,7 +596,7 @@ export const translations: Record<'en' | 'ar', Translations> = {
     takbirDescription:
       "Raise your hands and say 'Allahu Akbar' (Allah is the Greatest)",
     standing: 'Standing (Qiyam)',
-    standingDescription: 'Stand straight and recite Al-Fatiha',
+    standingDescription: 'Stand straight and recite Al-Fatiha and short Surah',
     bowing: 'Bowing (Ruku)',
     bowingDescription:
       "Bow down and say 'Subhana Rabbiyal Adheem' (Glory to my Lord, the Most Great)",
@@ -804,6 +808,8 @@ export const translations: Record<'en' | 'ar', Translations> = {
     // Quran Reading Screen
     quranReading: 'قراءة القرآن',
     quranPractice: 'تمرّن على قراءة القرآن',
+    quranLibrary: 'مكتبة القرآن',
+    quranLibrarySubtitle: 'تصفّح الأجزاء وابحث عن السور',
     selectSurah: 'اختر سورة',
     surahAlFatiha: 'الفاتحة',
     surahAlIkhlas: 'الإخلاص',
@@ -910,7 +916,7 @@ export const translations: Record<'en' | 'ar', Translations> = {
     takbir: 'التكبير',
     takbirDescription: "ارفع يديك وقل 'الله أكبر'",
     standing: 'القيام',
-    standingDescription: 'قف معتدلاً واقرأ الفاتحة',
+    standingDescription: 'قف معتدلاً واقرأ الفاتحة مع سورة قصيرة',
     bowing: 'الركوع',
     bowingDescription: "اركع وقل 'سبحان ربي العظيم'",
     standingAfterBowing: 'القيام من الركوع',
