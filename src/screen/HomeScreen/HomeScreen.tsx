@@ -8,6 +8,9 @@ import {BookOpen, Heart, Moon, Settings, Sparkles, Star, User, Users,} from 'luc
 import {SafeAreaView, useSafeAreaInsets,} from 'react-native-safe-area-context';
 import {useTwinkleAnimation} from '../../hooks/useAnimatedValue.ts';
 import Animated from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootstackParamList, Routes } from '../../MainNavigation/Routes.tsx';
 
 /**
  * HomeScreen Component
@@ -33,6 +36,8 @@ const AnimatedStar: React.FC<{
   );
 };
 
+type NavigationProps = NativeStackNavigationProp<RootstackParamList>;
+
 interface HomeScreenProps {
   userName: string;
 }
@@ -51,6 +56,7 @@ interface MainCard {
 export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
   const { colors } = useTheme();
   const { t } = useLanguage();
+  const navigation = useNavigation<NavigationProps>();
 
   const insets = useSafeAreaInsets();
   /**
@@ -106,6 +112,19 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
     },
   ];
 
+  const handleCardPress = (cardId: string) => {
+    switch (cardId) {
+      case 'learn-islam':
+        navigation.navigate(Routes.LearnIslamScreen);
+        break;
+      case 'quran-reading':
+        navigation.navigate(Routes.QuranSurahListScreen);
+        break;
+      default:
+        break;
+    }
+  };
+
   /**
    * Render individual navigation card
    */
@@ -116,7 +135,7 @@ export const HomeScreen = ({ userName = 'Omar' }: HomeScreenProps) => {
       <TouchableOpacity
         key={card.id}
         activeOpacity={0.7}
-        onPress={() => {}}
+        onPress={() => handleCardPress(card.id)}
         style={styles.cardTouchable}
       >
         <Card style={[styles.card, { backgroundColor: card.color }]}>

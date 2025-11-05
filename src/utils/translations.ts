@@ -254,6 +254,13 @@ export interface Translations {
   quranReading: string;
   quranPractice: string;
   selectSurah: string;
+  quranLibrary: string;
+  quranLibrarySubtitle: string;
+  searchSurah: string;
+  versesLabel: string;
+  noSurahFound: string;
+  noSurahFoundSubtitle: string;
+  juzLabel: string;
   surahAlFatiha: string;
   surahAlIkhlas: string;
   surahAlFalaq: string;
@@ -276,6 +283,13 @@ export interface Translations {
   tryAnotherVerse: string;
   playAudio: string;
   rewardMessage: string;
+  aiHelperTitle: string;
+  aiHelperDescription: string;
+  connectTarteel: string;
+  autoRepeat: string;
+  repeatAyah: string;
+  surahDetails: string;
+  verseProgress: string;
 }
 
 // ============================================
@@ -469,6 +483,13 @@ export const translations: Record<'en' | 'ar', Translations> = {
     quranReading: "Qur'an Reading",
     quranPractice: "Practice Qur'an Reading",
     selectSurah: 'Select a Surah',
+    quranLibrary: "Qur'an Library",
+    quranLibrarySubtitle: 'Browse by Juz, search, and pick a surah to recite',
+    searchSurah: 'Search surah name or number',
+    versesLabel: 'verses',
+    noSurahFound: 'No surahs found',
+    noSurahFoundSubtitle: 'Try adjusting your search or browse by Juz.',
+    juzLabel: 'Juz',
     surahAlFatiha: 'Al-Fatiha',
     surahAlIkhlas: 'Al-Ikhlas',
     surahAlFalaq: 'Al-Falaq',
@@ -492,6 +513,14 @@ export const translations: Record<'en' | 'ar', Translations> = {
     tryAnotherVerse: 'Try Another Verse',
     playAudio: 'Play Audio',
     rewardMessage: 'Amazing! You earned a star! ⭐',
+    aiHelperTitle: 'AI Recitation Coach',
+    aiHelperDescription:
+      'Connect a service like Tarteel or your Gemini assistant to correct tajwid and pronunciation while you recite.',
+    connectTarteel: 'Connect to Tarteel AI',
+    autoRepeat: 'Auto repeat',
+    repeatAyah: 'Repeat ayah',
+    surahDetails: 'Tap a verse to focus or long press for tafsir',
+    verseProgress: 'Verse',
 
     // Learn Islam Section
     // Arkan al-Islam
@@ -777,6 +806,13 @@ export const translations: Record<'en' | 'ar', Translations> = {
     quranReading: 'قراءة القرآن',
     quranPractice: 'تمرّن على قراءة القرآن',
     selectSurah: 'اختر سورة',
+    quranLibrary: 'مكتبة القرآن',
+    quranLibrarySubtitle: 'تصفّح الأجزاء وابحث عن السور لبدء التلاوة',
+    searchSurah: 'ابحث باسم السورة أو رقمها',
+    versesLabel: 'آيات',
+    noSurahFound: 'لا توجد سور مطابقة',
+    noSurahFoundSubtitle: 'جرّب تغيير كلمات البحث أو تصفّح حسب الجزء.',
+    juzLabel: 'جزء',
     surahAlFatiha: 'الفاتحة',
     surahAlIkhlas: 'الإخلاص',
     surahAlFalaq: 'الفلق',
@@ -800,6 +836,14 @@ export const translations: Record<'en' | 'ar', Translations> = {
     tryAnotherVerse: 'جرب آية أخرى',
     playAudio: 'تشغيل الصوت',
     rewardMessage: 'رائع! لقد حصلت على نجمة! ⭐',
+    aiHelperTitle: 'مدرب التلاوة بالذكاء الاصطناعي',
+    aiHelperDescription:
+      'اربط خدمة مثل ترتيل أو مساعد Gemini للحصول على ملاحظات فورية على التجويد والنطق.',
+    connectTarteel: 'الاتصال بترتيل الذكي',
+    autoRepeat: 'تكرار تلقائي',
+    repeatAyah: 'تكرار الآية',
+    surahDetails: 'اضغط على الآية للتركيز أو اضغط مطولاً للتفسير',
+    verseProgress: 'آية',
 
     // Learn Islam Section
     // Arkan al-Islam

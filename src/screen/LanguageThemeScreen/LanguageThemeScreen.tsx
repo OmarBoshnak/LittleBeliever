@@ -17,6 +17,7 @@ import {
   spacing,
 } from '../../theme/spacing';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
 import { Card } from '../../component/Card';
 import { Button } from '../../component/Button';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -26,10 +27,13 @@ import GradientBackground from '../../component/GradientBackground.tsx';
 
 type NavigationProps = NativeStackNavigationProp<RootstackParamList>;
 
-interface Language {
+interface LanguageOption {
   id: 'en' | 'ar';
-  label: string;
-  flag: string;
+  title: string;
+  subtitle: string;
+  emoji: string;
+  gradient: [string, string];
+  isRTL?: boolean;
 }
 
 interface Theme {
@@ -53,9 +57,23 @@ export const LanguageThemeScreen = () => {
   // ✅ Determine if layout should be RTL
   const isRTL = selectedLanguage === 'ar';
 
-  const languages: Language[] = [
-    { id: 'ar', label: 'العربية', flag: '🇸🇦' },
-    { id: 'en', label: 'English', flag: '🇬🇧' },
+  const languages: LanguageOption[] = [
+    {
+      id: 'ar',
+      title: 'العربية',
+      subtitle: 'اختر اللغة العربية',
+      emoji: '🇸🇦',
+      gradient: ['#f5ebe033', '#f9d9a733'],
+      isRTL: true,
+    },
+    {
+      id: 'en',
+      title: 'English',
+      subtitle: 'Select English language',
+      emoji: '🇬🇧',
+      gradient: ['#a7d5dd33', '#7ec4cf33'],
+      isRTL: false,
+    },
   ];
 
   const themes: Theme[] = [
@@ -140,57 +158,109 @@ export const LanguageThemeScreen = () => {
             Language / اللغة
           </Text>
           <View style={styles.languageGrid}>
-            {languages.map((lang, index) => (
-              <Animated.View
-                key={lang.id}
-                entering={FadeInDown.delay(index * 100).springify()}
-                style={{ flex: 1 }}
-              >
-                <TouchableOpacity
-                  onPress={() => setSelectedLanguage(lang.id)}
-                  activeOpacity={0.7}
-                >
-                  <Card
-                    style={
-                      selectedLanguage === lang.id
-                        ? [
-                            styles.languageCard,
-                            {
-                              backgroundColor: `${colors.primary}33`,
-                              borderColor: colors.primary,
-                              borderWidth: 2,
-                              transform: [{ scale: 1.05 }],
-                            },
-                          ]
-                        : styles.languageCard
-                    }
-                  >
-                    {selectedLanguage === lang.id && (
-                      <View
-                        style={[
-                          styles.checkMark,
-                          { backgroundColor: colors.primary },
-                        ]}
-                      >
-                        <Check size={16} color={colors.primaryForeground} />
-                      </View>
-                    )}
+            {languages.map((lang, index) => {
+              const isSelected = selectedLanguage === lang.id;
+              const cardIsRTL = Boolean(lang.isRTL);
 
-                    <View style={styles.languageContent}>
-                      <Text style={styles.flag}>{lang.flag}</Text>
-                      <Text
+              return (
+                <Animated.View
+                  key={lang.id}
+                  entering={FadeInDown.delay(index * 100).springify()}
+                  style={styles.languageColumn}
+                >
+                  <TouchableOpacity
+                    onPress={() => setSelectedLanguage(lang.id)}
+                    activeOpacity={0.85}
+                    style={styles.languageTouchable}
+                  >
+                    <LinearGradient
+                      colors={lang.gradient}
+                      style={[
+                        styles.languageGradient,
+                        isSelected && { transform: [{ scale: 1.02 }] },
+                      ]}
+                    >
+                      <Card
                         style={[
-                          styles.languageLabel,
-                          { color: colors.foreground },
+                          styles.languageCard,
+                          {
+                            backgroundColor: 'transparent',
+                            borderWidth: isSelected ? 2 : 0,
+                            borderColor: isSelected
+                              ? colors.primary
+                              : 'transparent',
+                          },
                         ]}
                       >
-                        {lang.label}
-                      </Text>
-                    </View>
-                  </Card>
-                </TouchableOpacity>
-              </Animated.View>
-            ))}
+                        {isSelected && (
+                          <View
+                            style={[
+                              styles.checkMark,
+                              { backgroundColor: colors.primary },
+                              cardIsRTL
+                                ? { left: 12, right: undefined }
+                                : { right: 12 },
+                            ]}
+                          >
+                            <Check size={16} color={colors.primaryForeground} />
+                          </View>
+                        )}
+
+                        <View
+                          style={[
+                            styles.languageContent,
+                            cardIsRTL && { flexDirection: 'row-reverse' },
+                          ]}
+                        >
+                          <View
+                            style={[
+                              styles.languageEmojiContainer,
+                              cardIsRTL
+                                ? { marginLeft: spacing.md, marginRight: 0 }
+                                : { marginRight: spacing.md, marginLeft: 0 },
+                            ]}
+                          >
+                            <Text style={styles.languageEmoji}>{lang.emoji}</Text>
+                          </View>
+
+                          <View
+                            style={[
+                              styles.languageTextContainer,
+                              cardIsRTL
+                                ? { alignItems: 'flex-end' }
+                                : { alignItems: 'flex-start' },
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                styles.languageTitle,
+                                {
+                                  color: colors.secondaryForeground,
+                                  textAlign: cardIsRTL ? 'right' : 'left',
+                                },
+                              ]}
+                            >
+                              {lang.title}
+                            </Text>
+                            <Text
+                              style={[
+                                styles.languageSubtitle,
+                                {
+                                  color: colors.mutedForeground,
+                                  textAlign: cardIsRTL ? 'right' : 'left',
+                                },
+                              ]}
+                            >
+                              {lang.subtitle}
+                            </Text>
+                          </View>
+                        </View>
+                      </Card>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </Animated.View>
+              );
+            })}
           </View>
         </View>
 
@@ -358,26 +428,54 @@ const styles = StyleSheet.create({
   languageGrid: {
     flexDirection: 'row',
     gap: spacing.lg,
+    flexWrap: 'wrap',
+  },
+  languageColumn: {
+    flex: 1,
+    minWidth: '48%',
+  },
+  languageTouchable: {
+    flex: 1,
+  },
+  languageGradient: {
+    borderRadius: borderRadius.xl,
+    padding: 1,
+    overflow: 'hidden',
   },
   languageCard: {
-    padding: spacing.xl,
+    padding: spacing.lg,
+    borderRadius: borderRadius.xl,
     position: 'relative',
   },
   languageContent: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.lg,
   },
-  flag: {
-    fontSize: 40,
-    marginBottom: spacing.sm,
+  languageEmojiContainer: {
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
   },
-  languageLabel: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.medium,
+  languageEmoji: {
+    fontSize: fontSize['3xl'],
+  },
+  languageTextContainer: {
+    flex: 1,
+  },
+  languageTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.semibold,
+  },
+  languageSubtitle: {
+    fontSize: fontSize.sm,
+    marginTop: spacing.xs,
+    lineHeight: 20,
   },
   checkMark: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 12,
+    right: 12,
     width: 24,
     height: 24,
     borderRadius: 12,
