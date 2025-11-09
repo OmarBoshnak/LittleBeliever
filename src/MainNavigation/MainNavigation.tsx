@@ -10,7 +10,8 @@ import { ArkanAlIslamScreen } from '../screen/HomeScreen/LearnIslam/ArkanAlIslam
 import { LearnIslamScreen } from '../screen/HomeScreen/LearnIslam/LearnIsalmScreen.tsx';
 import { WuduScreen } from '../screen/HomeScreen/LearnIslam/WuduScreen.tsx';
 import { PrayScreen } from '../screen/HomeScreen/LearnIslam/PrayScreen.tsx';
-import QuranIndexScreen from '../screen/HomeScreen/Quran/QuranIndexScreen.tsx';
+import { QuranReaderScreen } from '../screen/HomeScreen/Quran/QuranReadingScreen.tsx';
+import { QuranIndexScreen } from '../screen/HomeScreen/Quran/QuranIndexScreen.tsx';
 
 const Stack = createNativeStackNavigator<RootstackParamList>();
 
@@ -70,6 +71,11 @@ export const MainNavigation = () => {
       <Stack.Screen
         name={Routes.QuranIndexScreen}
         component={QuranIndexScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={Routes.QuranReaderScreen}
+        component={QuranReaderScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

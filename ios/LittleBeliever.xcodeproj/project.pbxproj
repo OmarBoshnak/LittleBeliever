@@ -13,6 +13,7 @@
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		87C3B138159CBFD0F1B98694 /* Pods_LittleBeliever.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9C163B656442F76F772EAE /* Pods_LittleBeliever.framework */; };
+		A63DC3CDCD074CB290242CA7 /* KFGQPC Uthmanic Script HAFS Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5902B8EF3F6A4819BBC59E99 /* KFGQPC Uthmanic Script HAFS Regular.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		CF9C163B656442F76F772EAE /* Pods_LittleBeliever.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LittleBeliever.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E67939D49C5F42B35B095072 /* Pods-LittleBeliever.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LittleBeliever.debug.xcconfig"; path = "Target Support Files/Pods-LittleBeliever/Pods-LittleBeliever.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		5902B8EF3F6A4819BBC59E99 /* KFGQPC Uthmanic Script HAFS Regular.otf */ = {isa = PBXFileReference; name = "KFGQPC Uthmanic Script HAFS Regular.otf"; path = "../assets/fonts/KFGQPC Uthmanic Script HAFS Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				3CEF7D443CEF4BF1B098684B /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -100,6 +103,15 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		3CEF7D443CEF4BF1B098684B /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				5902B8EF3F6A4819BBC59E99 /* KFGQPC Uthmanic Script HAFS Regular.otf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -170,6 +182,7 @@
 				678F3DE42EA007D100DD80A1 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				6F8240B1D96538D2F0C4A862 /* PrivacyInfo.xcprivacy in Resources */,
+				A63DC3CDCD074CB290242CA7 /* KFGQPC Uthmanic Script HAFS Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

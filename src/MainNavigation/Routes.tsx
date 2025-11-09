@@ -1,3 +1,6 @@
+import { QuranIndexScreen } from '../screen/HomeScreen/Quran/QuranIndexScreen.tsx';
+import { QuranReaderScreen } from '../screen/HomeScreen/Quran/QuranReadingScreen.tsx';
+
 export const Routes = {
   SplashScreen: 'SplashScreen',
   LanguageThemeScreen: 'LanguageThemeScreen',
@@ -10,6 +13,7 @@ export const Routes = {
   WuduScreen: 'WuduScreen',
   PrayScreen: 'PrayScreen',
   QuranIndexScreen: 'QuranIndexScreen',
+  QuranReaderScreen: 'QuranReaderScreen',
 } as const;
 
 export type RootstackParamList = {
@@ -24,4 +28,14 @@ export type RootstackParamList = {
   WuduScreen: undefined;
   PrayScreen: undefined;
   QuranIndexScreen: undefined;
+  QuranReaderScreen:
+    | {
+        surahNumber: number;
+        surahName?: string;
+        surahNameArabic?: string;
+        juzNumber?: number;
+        startAyah?: number;
+        isSubscribed?: boolean;
+      }
+    | undefined;
 };

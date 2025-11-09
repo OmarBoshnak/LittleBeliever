@@ -266,9 +266,19 @@ export interface Translations {
   // Quran Reading Screen
   quranReading: string;
   quranPractice: string;
+  selectSurah: string;
   quranLibrary: string;
   quranLibrarySubtitle: string;
-  selectSurah: string;
+  searchSurah: string;
+  versesLabel: string;
+  surahsLabel: string;
+  noSurahFound: string;
+  learningMode: string;
+  readingMode: string;
+  noSurahFoundSubtitle: string;
+  juzLabel: string;
+  searchResults: string;
+  networkError: string;
   surahAlFatiha: string;
   surahAlIkhlas: string;
   surahAlFalaq: string;
@@ -283,6 +293,8 @@ export interface Translations {
   makeSoundSoft: string;
   showTranslation: string;
   hideTranslation: string;
+  meccan: string;
+  medinan: string;
   longPressTafsir: string;
   tafsirTitle: string;
   close: string;
@@ -290,7 +302,36 @@ export interface Translations {
   lockedSurah: string;
   tryAnotherVerse: string;
   playAudio: string;
+  playAll: string;
+  audioUnavailable: string;
+  unableToOpen: string;
   rewardMessage: string;
+  loading: string;
+  resumeAt: string;
+  ayahLabel: string;
+  surahTabLabel: string;
+  juzTabLabel: string;
+  savedTabLabel: string;
+  noBookmarksTitle: string;
+  noBookmarksSubtitle: string;
+  bookmarkFirstAyah: string;
+  bookmarkFirstAyahDescription: string;
+  aiHelperTitle: string;
+  aiHelperDescription: string;
+  connectTarteel: string;
+  autoRepeat: string;
+  repeatAyah: string;
+  surahDetails: string;
+  verseProgress: string;
+  repeatMode: string;
+  readerSettings: string;
+  fontSizeLabel: string;
+  on: string;
+  off: string;
+  listen: string;
+  startPractice: string;
+  practiceAyah: string;
+  aiHelper: string;
 }
 
 // ============================================
@@ -483,9 +524,19 @@ export const translations: Record<'en' | 'ar', Translations> = {
     // Quran Reading Screen
     quranReading: "Qur'an Reading",
     quranPractice: "Practice Qur'an Reading",
-    quranLibrary: "Qur'an Library",
-    quranLibrarySubtitle: 'Browse by Juz, search, and pick a surah',
     selectSurah: 'Select a Surah',
+    quranLibrary: "Qur'an Library",
+    quranLibrarySubtitle: 'Browse by Juz, search, and pick a surah to recite',
+    searchSurah: 'Search surah name or number',
+    versesLabel: 'verses',
+    surahsLabel: 'surahs',
+    noSurahFound: 'No surahs found',
+    noSurahFoundSubtitle: 'Try adjusting your search or browse by Juz.',
+    juzLabel: 'Juz',
+    learningMode: 'Learning Mode',
+    readingMode: 'Reading Mode',
+    searchResults: 'Search results',
+    networkError: 'Something went wrong. Check your connection and try again.',
     surahAlFatiha: 'Al-Fatiha',
     surahAlIkhlas: 'Al-Ikhlas',
     surahAlFalaq: 'Al-Falaq',
@@ -500,15 +551,47 @@ export const translations: Record<'en' | 'ar', Translations> = {
     makeSoundSoft: 'make the sound soft',
     showTranslation: 'Show Translation',
     hideTranslation: 'Hide Translation',
+    meccan: 'Meccan',
+    medinan: 'Medinan',
     longPressTafsir: 'Long press any verse for Tafsir',
     tafsirTitle: 'Tafsir (Explanation)',
     close: 'Close',
     unlockQuran:
-      "Unlock full Qur'an reading with your AI helper for only \n 50 EGP/month 🌙",
+      "Unlock full Qur'an reading with your AI helper for only 50 EGP/month 🌙",
     lockedSurah: 'This Surah is locked',
     tryAnotherVerse: 'Try Another Verse',
     playAudio: 'Play Audio',
+    playAll: 'Play All',
+    audioUnavailable: 'Audio is not available for this verse yet.',
+    unableToOpen: 'Could not open the audio link.',
     rewardMessage: 'Amazing! You earned a star! ⭐',
+    loading: 'Loading...',
+    resumeAt: 'Resume at ayah',
+    ayahLabel: 'Ayah',
+    surahTabLabel: 'Surahs',
+    juzTabLabel: 'Juz',
+    savedTabLabel: 'Saved',
+    noBookmarksTitle: 'No bookmarks yet',
+    noBookmarksSubtitle: 'Bookmark ayahs as you read to save them here.',
+    bookmarkFirstAyah: 'Select an ayah first',
+    bookmarkFirstAyahDescription: 'Play or tap a verse before bookmarking it.',
+    aiHelperTitle: 'AI Recitation Coach',
+    aiHelperDescription:
+      'Connect a service like Tarteel or your Gemini assistant to correct tajwid and pronunciation while you recite.',
+    connectTarteel: 'Connect to Tarteel AI',
+    autoRepeat: 'Auto repeat',
+    repeatAyah: 'Repeat ayah',
+    surahDetails: 'Tap a verse to focus or long press for tafsir',
+    verseProgress: 'Verse',
+    repeatMode: 'Repeat mode',
+    readerSettings: 'Reading settings',
+    fontSizeLabel: 'Font size',
+    on: 'On',
+    off: 'Off',
+    listen: 'Listen',
+    startPractice: 'Start practice',
+    practiceAyah: 'Practice Ayah',
+    aiHelper: 'Open AI helper',
 
     // Learn Islam Section
     // Arkan al-Islam
@@ -808,9 +891,19 @@ export const translations: Record<'en' | 'ar', Translations> = {
     // Quran Reading Screen
     quranReading: 'قراءة القرآن',
     quranPractice: 'تمرّن على قراءة القرآن',
-    quranLibrary: 'مكتبة القرآن',
-    quranLibrarySubtitle: 'تصفّح الأجزاء وابحث عن السور',
     selectSurah: 'اختر سورة',
+    quranLibrary: 'مكتبة القرآن',
+    quranLibrarySubtitle: 'تصفّح الأجزاء وابحث عن السور لبدء التلاوة',
+    searchSurah: 'ابحث باسم السورة أو رقمها',
+    versesLabel: 'آيات',
+    surahsLabel: 'سور',
+    noSurahFound: 'لا توجد سور مطابقة',
+    noSurahFoundSubtitle: 'جرّب تغيير كلمات البحث أو تصفّح حسب الجزء.',
+    juzLabel: 'جزء',
+    learningMode: 'وضع التعلم',
+    readingMode: 'وضع القراءة',
+    searchResults: 'نتائج البحث',
+    networkError: 'حدث خطأ ما. تحقق من الاتصال وحاول مرة أخرى.',
     surahAlFatiha: 'الفاتحة',
     surahAlIkhlas: 'الإخلاص',
     surahAlFalaq: 'الفلق',
@@ -825,6 +918,8 @@ export const translations: Record<'en' | 'ar', Translations> = {
     makeSoundSoft: 'اجعل الصوت ناعماً',
     showTranslation: 'إظهار الترجمة',
     hideTranslation: 'إخفاء الترجمة',
+    meccan: 'مكية',
+    medinan: 'مدنية',
     longPressTafsir: 'اضغط مطولاً على أي آية للتفسير',
     tafsirTitle: 'التفسير',
     close: 'إغلاق',
@@ -833,7 +928,37 @@ export const translations: Record<'en' | 'ar', Translations> = {
     lockedSurah: 'هذه السورة مقفلة',
     tryAnotherVerse: 'جرب آية أخرى',
     playAudio: 'تشغيل الصوت',
+    playAll: 'تشغيل الكل',
+    audioUnavailable: 'الصوت غير متوفر لهذه الآية حالياً.',
+    unableToOpen: 'تعذر فتح رابط الصوت.',
     rewardMessage: 'رائع! لقد حصلت على نجمة! ⭐',
+    loading: 'جاري التحميل...',
+    resumeAt: 'تابع من الآية',
+    ayahLabel: 'آية',
+    surahTabLabel: 'السور',
+    juzTabLabel: 'الأجزاء',
+    savedTabLabel: 'المحفوظات',
+    noBookmarksTitle: 'لا إشارات مرجعية بعد',
+    noBookmarksSubtitle: 'قم بحفظ الآيات أثناء القراءة لتجدها هنا.',
+    bookmarkFirstAyah: 'اختر آية أولاً',
+    bookmarkFirstAyahDescription: 'قم بتشغيل أو لمس آية قبل حفظها.',
+    aiHelperTitle: 'مدرب التلاوة بالذكاء الاصطناعي',
+    aiHelperDescription:
+      'اربط خدمة مثل ترتيل أو مساعد Gemini للحصول على ملاحظات فورية على التجويد والنطق.',
+    connectTarteel: 'الاتصال بترتيل الذكي',
+    autoRepeat: 'تكرار تلقائي',
+    repeatAyah: 'تكرار الآية',
+    surahDetails: 'اضغط على الآية للتركيز أو اضغط مطولاً للتفسير',
+    verseProgress: 'آية',
+    repeatMode: 'وضع التكرار',
+    readerSettings: 'إعدادات القراءة',
+    fontSizeLabel: 'حجم الخط',
+    on: 'تشغيل',
+    off: 'إيقاف',
+    listen: 'استمع',
+    startPractice: 'ابدأ التمرين',
+    practiceAyah: 'تدريب على آية',
+    aiHelper: 'فتح مساعد الذكاء الاصطناعي',
 
     // Learn Islam Section
     // Arkan al-Islam
