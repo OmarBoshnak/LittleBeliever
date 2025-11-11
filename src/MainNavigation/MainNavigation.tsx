@@ -10,7 +10,7 @@ import { ArkanAlIslamScreen } from '../screen/HomeScreen/LearnIslam/ArkanAlIslam
 import { LearnIslamScreen } from '../screen/HomeScreen/LearnIslam/LearnIsalmScreen.tsx';
 import { WuduScreen } from '../screen/HomeScreen/LearnIslam/WuduScreen.tsx';
 import { PrayScreen } from '../screen/HomeScreen/LearnIslam/PrayScreen.tsx';
-import { QuranReaderScreen } from '../screen/HomeScreen/Quran/QuranReadingScreen.tsx';
+import { QuranReaderScreen } from '../screen/HomeScreen/Quran/QuranReaderScreen.tsx';
 import { QuranIndexScreen } from '../screen/HomeScreen/Quran/QuranIndexScreen.tsx';
 
 const Stack = createNativeStackNavigator<RootstackParamList>();

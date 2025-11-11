@@ -1,533 +1,471 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
-  SectionList,
-  SectionListData,
-  SectionListRenderItem,
+  Alert,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ArrowLeft, Bookmark, ChevronRight, Search } from 'lucide-react-native';
-
+import { useNavigation } from '@react-navigation/native';
 import { RootstackParamList, Routes } from '../../../MainNavigation/Routes.tsx';
-import { useTheme } from '../../../theme/ThemeContext.tsx';
 import { useLanguage } from '../../../context/LanguageContext.tsx';
-import {
-  borderRadius,
-  fontSize,
-  fontWeight,
-  spacing,
-} from '../../../theme/spacing.ts';
+import { useTheme } from '../../../theme/ThemeContext.tsx';
 import { Card } from '../../../component/Card.tsx';
-import { Input } from '../../../component/Input.tsx';
+import { Button } from '../../../component/Button.tsx';
+import { Progress } from '../../../component/Progress.tsx';
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from '../../../component/QuranComponent/Tabs.tsx';
-import { useQuranBookmarks } from '../../../hooks/useQuranBookmarks.ts';
+  ArrowLeft,
+  Bookmark,
+  BookOpen,
+  ChevronRight,
+  Lock,
+} from 'lucide-react-native';
 import {
   getAllJuzMeta,
   getAllSurahs,
-  JuzMeta,
-  SurahMeta,
-} from '../../../api/quranApi';
-import { Progress } from '../../../component/Progress.tsx';
-import { useNavigation } from '@react-navigation/native';
-import GradientBackground from '../../../component/GradientBackground.tsx';
-
-const HEADER_GRADIENT = ['#c8e6f566', '#fdfcf866', '#f9d9a766'];
-
-const stripLatinDiacritics = (s: string) =>
-  s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-// Arabic-Indic/Persian digits → 0-9
-const normalizeArabicDigits = (s: string) =>
-  s
-    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d).toString())
-    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString());
-
-// unify Arabic, remove tashkeel, kashida, and tolerant taa marbuta
-const normalizeArabicLetters = (s: string) =>
-  s
-    // harakat & Quranic marks
-    .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
-    // tatweel
-    .replace(/\u0640/g, '')
-    // letter variants
-    .replace(/[أإآٱ]/g, 'ا')
-    .replace(/ى/g, 'ي')
-    .replace(/ؤ/g, 'و')
-    .replace(/ئ/g, 'ي')
-    // taa marbuta ~ ha
-    .replace(/ة/g, 'ه');
-
-const normalizeForSearch = (s: string) =>
-  stripLatinDiacritics(normalizeArabicLetters(normalizeArabicDigits(s)))
-    .toLowerCase()
-    .trim();
-
-interface SurahListItem {
-  number: number;
-  nameArabic: string;
-  englishName: string;
-  englishTranslation: string;
-  ayahCount: number;
-  revelationType: 'Meccan' | 'Medinan';
-  juz: number;
-}
-
-type Section = SectionListData<SurahListItem, { title: string; id: number }>;
+  type JuzMeta,
+  type SurahMeta,
+} from '../../../api/quranApi.ts';
+import { useQuranBookmarks } from '../../../hooks/useQuranBookmarks.ts';
+import { useAppSelector } from '../../../redux/hooks.ts';
+import { borderRadius, fontSize, spacing } from '../../../theme/spacing.ts';
 
 type NavigationProps = NativeStackNavigationProp<RootstackParamList>;
 
+type TabType = 'surah' | 'bookmarks';
+
 export const QuranIndexScreen = () => {
-  const { colors } = useTheme();
-  const { t, isRTL } = useLanguage();
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProps>();
+  const { t, language } = useLanguage();
+  const { colors } = useTheme();
   const {
     bookmarks,
     progress,
     loading: bookmarksLoading,
   } = useQuranBookmarks();
+  const isPremium = useAppSelector(state => state.subscription.isPremium);
 
+  const [activeTab, setActiveTab] = useState<TabType>('surah');
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
-  const [juzMeta, setJuzMeta] = useState<JuzMeta[]>([]);
-  const [query, setQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'surah' | 'juz' | 'saved'>(
-    'surah',
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const [surahList, juzList] = await Promise.all([
-          getAllSurahs(),
-          getAllJuzMeta(),
-        ]);
-        setSurahs(surahList);
-        setJuzMeta(juzList);
-      } catch (err) {
-        console.warn("Failed to load Qur'an meta", err);
-        setError(t.networkError);
-      } finally {
-        setLoading(false);
-      }
-    };
+    loadData();
+  }, []);
 
-    load();
-  }, [t.networkError]);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [surahsData, juzData] = await Promise.all([
+        getAllSurahs(),
+        getAllJuzMeta(),
+      ]);
+      setSurahs(surahsData);
+    } catch (err: any) {
+      setError(err.message || t.networkError);
+      Alert.alert(t.networkError, err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const surahMap = useMemo(() => {
-    return surahs.reduce<Record<number, SurahMeta>>((acc, item) => {
-      acc[item.number] = item;
-      return acc;
-    }, {});
-  }, [surahs]);
+  const handleSurahSelect = (surah: SurahMeta) => {
+    // First 4 surahs are free, rest require premium
+    const isLocked = !isPremium && surah.number > 4;
 
-  const surahToJuz = useMemo(() => {
-    const map = new Map<number, number>();
-    juzMeta.forEach(juz => {
-      juz.surahs.forEach(surah => {
-        if (!map.has(surah.number)) {
-          map.set(surah.number, juz.juz);
-        }
-      });
-    });
-    return map;
-  }, [juzMeta]);
-
-  const buildItem = React.useCallback(
-    (surahNumber: number, juzNumber: number): SurahListItem | null => {
-      const meta = surahMap[surahNumber];
-      if (!meta) {
-        return null;
-      }
-
-      return {
-        number: meta.number,
-        nameArabic: meta.name,
-        englishName: meta.englishName,
-        englishTranslation: meta.englishNameTranslation,
-        ayahCount: meta.numberOfAyahs,
-        revelationType: meta.revelationType,
-        juz: juzNumber,
-      };
-    },
-    [surahMap],
-  );
-
-  const normalizedQuery = useMemo(() => normalizeForSearch(query), [query]);
-
-  // pre-normalize surah searchable fields (perf win)
-  const normalizedSurahs = useMemo(
-    () =>
-      surahs.map(s => ({
-        number: s.number,
-        nAr: normalizeForSearch(s.name),
-        nEn: normalizeForSearch(s.englishName),
-        nTr: normalizeForSearch(s.englishNameTranslation),
-        nNum: normalizeForSearch(String(s.number)),
-      })),
-    [surahs],
-  );
-
-  const sections = useMemo(() => {
-    if (!surahs.length || !juzMeta.length) {
-      return [] as Section[];
+    if (isLocked) {
+      Alert.alert(
+        t.unlockQuran || 'Premium Content',
+        t.unlockWithPremium || 'Subscribe to unlock this surah',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: t.upgradeToPremium || 'Subscribe',
+            onPress: () => navigation.navigate(Routes.SubscriberScreen),
+          },
+        ],
+      );
+      return;
     }
 
-    if (normalizedQuery) {
-      const matches = normalizedSurahs
-        .filter(
-          s =>
-            s.nAr.includes(normalizedQuery) ||
-            s.nEn.includes(normalizedQuery) ||
-            s.nTr.includes(normalizedQuery) ||
-            s.nNum.includes(normalizedQuery),
-        )
-        .map(s => buildItem(s.number, surahToJuz.get(s.number) ?? 1))
-        .filter((item): item is SurahListItem => Boolean(item));
-
-      return matches.length
-        ? [
-            {
-              data: matches,
-              title: t.searchResults,
-              id: 0,
-            },
-          ]
-        : [];
-    }
-
-    // Default: grouped by Juz
-    return juzMeta
-      .map(juz => {
-        const data = juz.surahs
-          .map(surah => buildItem(surah.number, juz.juz))
-          .filter((item): item is SurahListItem => Boolean(item));
-        return {
-          data,
-          title: `${t.juzLabel} ${juz.juz}`,
-          id: juz.juz,
-        };
-      })
-      .filter(section => section.data.length > 0);
-  }, [
-    surahs,
-    juzMeta,
-    normalizedQuery,
-    normalizedSurahs,
-    surahToJuz,
-    buildItem,
-    t.juzLabel,
-    t.searchResults,
-  ]);
-
-  const handleSelectSurah = (item: SurahListItem) => {
     navigation.navigate(Routes.QuranReaderScreen, {
-      surahNumber: item.number,
-      surahName: item.englishName,
-      surahNameArabic: item.nameArabic,
-      juzNumber: item.juz,
+      surahNumber: surah.number,
+      surahName: surah.englishName,
+      surahNameArabic: surah.name,
+      isSubscribed: isPremium,
     });
   };
 
-  const renderSectionHeader = ({ section }: { section: Section }) => (
-    <Text style={[styles.sectionTitle, { color: colors.secondary }]}>
-      {section.title}
-    </Text>
-  );
+  const handleJuzSelect = (juz: JuzMeta) => {
+    if (!juz.surahs.length) return;
 
-  const renderSurahItem: SectionListRenderItem<SurahListItem, Section> = ({
-    item,
-  }) => {
-    const progressEntry = progress[item.number];
-    const completedRatio = progressEntry
-      ? ((progressEntry.ayahNumber + 1) / item.ayahCount) * 100
-      : 0;
+    const firstSurah = juz.surahs[0];
+    const surah = surahs.find(s => s.number === firstSurah.number);
 
-    return (
-      <TouchableOpacity
-        activeOpacity={0.82}
-        onPress={() => handleSelectSurah(item)}
-      >
-        <Card
-          style={[styles.surahCard, { backgroundColor: `${colors.card}F5` }]}
-        >
-          <View
-            style={[
-              styles.surahRow,
-              { flexDirection: isRTL ? 'row-reverse' : 'row' },
-            ]}
-          >
-            <View
-              style={[styles.badge, { backgroundColor: `${colors.primary}1A` }]}
-            >
-              <Text style={[styles.badgeText, { color: colors.primary }]}>
-                {item.number}
-              </Text>
-            </View>
-            <View
-              style={[styles.surahInfo, isRTL && { alignItems: 'flex-end' }]}
-            >
-              <Text
-                style={[styles.surahNameArabic, { color: colors.foreground }]}
-              >
-                {item.nameArabic}
-              </Text>
-              <Text
-                style={[
-                  styles.surahNameEnglish,
-                  { color: colors.mutedForeground },
-                ]}
-              >
-                {item.englishName}
-              </Text>
-              <View style={styles.metaRow}>
-                <Text style={[styles.metaText, { color: colors.secondary }]}>
-                  {item.revelationType === 'Meccan' ? t.meccan : t.medinan}
-                </Text>
-                <View style={styles.dot} />
-                <Text
-                  style={[styles.metaText, { color: colors.mutedForeground }]}
-                >
-                  {item.ayahCount} {t.versesLabel}
-                </Text>
-              </View>
-              {progressEntry && (
-                <View style={styles.progressRow}>
-                  <Progress value={completedRatio} style={styles.progressBar} />
-                  <Text
-                    style={[
-                      styles.progressLabel,
-                      { color: colors.mutedForeground },
-                    ]}
-                  >
-                    {t.resumeAt} {progressEntry.ayahNumber + 1}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </View>
-        </Card>
-      </TouchableOpacity>
-    );
+    if (surah) {
+      navigation.navigate(Routes.QuranReaderScreen, {
+        surahNumber: surah.number,
+        surahName: surah.englishName,
+        surahNameArabic: surah.name,
+        juzNumber: juz.juz,
+        isSubscribed: isPremium,
+      });
+    }
   };
 
-  const handleBookmarkPress = (bookmark: (typeof bookmarks)[number]) => {
+  const handleBookmarkSelect = (bookmark: any) => {
     navigation.navigate(Routes.QuranReaderScreen, {
       surahNumber: bookmark.surahNumber,
       surahName: bookmark.surahName,
       surahNameArabic: bookmark.surahNameArabic,
       startAyah: bookmark.ayahNumber,
+      isSubscribed: isPremium,
     });
   };
 
-  const renderBookmark = ({ item }: { item: (typeof bookmarks)[number] }) => (
-    <Card
-      style={[styles.bookmarkCard, { backgroundColor: `${colors.card}F2` }]}
-    >
-      <TouchableOpacity
-        onPress={() => handleBookmarkPress(item)}
-        activeOpacity={0.85}
-        style={[
-          styles.bookmarkRow,
-          { flexDirection: isRTL ? 'row-reverse' : 'row' },
-        ]}
-      >
-        <View
-          style={[
-            styles.bookmarkBadge,
-            { backgroundColor: `${colors.primary}1A` },
-          ]}
-        >
-          <Bookmark size={18} color={colors.primary} />
-        </View>
-        <View
-          style={[styles.bookmarkInfo, isRTL && { alignItems: 'flex-end' }]}
-        >
-          <Text style={[styles.bookmarkSurah, { color: colors.foreground }]}>
-            {item.surahNameArabic}
-          </Text>
-          <Text
-            style={[styles.bookmarkSubtitle, { color: colors.mutedForeground }]}
-          >
-            {item.surahName} • {t.ayahLabel} {item.ayahNumber + 1}
-          </Text>
-        </View>
-        <ChevronRight size={18} color={colors.mutedForeground} />
-      </TouchableOpacity>
-    </Card>
-  );
-
-  const renderContent = () => {
+  const renderSurahTab = () => {
     if (loading) {
       return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator color={colors.primary} size="large" />
-          <Text style={[styles.loadingText, { color: colors.mutedForeground }]}>
-            {t.loading}
-          </Text>
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       );
     }
 
-    if (error) {
-      return (
-        <View style={styles.loadingContainer}>
-          <Text style={[styles.errorText, { color: colors.destructive }]}>
-            {error}
-          </Text>
-        </View>
-      );
-    }
+    return (
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {surahs.map(surah => {
+          const lastRead = progress[surah.number];
+          const hasBookmark = bookmarks.some(
+            b => b.surahNumber === surah.number,
+          );
+          const isLocked = !isPremium && surah.number > 4;
 
-    if (activeTab === 'surah') {
-      return (
-        <SectionList
-          sections={sections}
-          keyExtractor={item => `${item.number}-${item.juz}`}
-          renderItem={renderSurahItem}
-          renderSectionHeader={renderSectionHeader}
-          stickySectionHeadersEnabled={false}
-          contentContainerStyle={styles.sectionListContent}
-        />
-      );
-    }
+          return (
+            <TouchableOpacity
+              key={surah.number}
+              onPress={() => handleSurahSelect(surah)}
+              activeOpacity={0.7}
+            >
+              <Card
+                style={[
+                  styles.surahCard,
+                  ...(isLocked ? [styles.lockedCard] : []),
+                ]}
+              >
+                {/* Continue Reading Badge */}
+                {lastRead && lastRead.ayahNumber > 0 && (
+                  <View style={styles.continueBadge}>
+                    <Text style={styles.continueBadgeText}>
+                      {t.continue || 'Continue'}
+                    </Text>
+                  </View>
+                )}
 
+                <View style={styles.surahCardContent}>
+                  {/* Surah Number Circle */}
+                  <View style={styles.surahNumberContainer}>
+                    <View
+                      style={[
+                        styles.surahNumberCircle,
+                        { backgroundColor: colors.primary },
+                      ]}
+                    >
+                      <Text style={styles.surahNumberText}>{surah.number}</Text>
+                    </View>
+                    {isLocked && (
+                      <View style={styles.lockBadge}>
+                        <Lock size={12} color="#fff" />
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Surah Info */}
+                  <View style={styles.surahInfo}>
+                    <View style={styles.surahNameRow}>
+                      <Text
+                        style={[
+                          styles.surahNameArabic,
+                          { color: colors.foreground },
+                        ]}
+                      >
+                        {surah.name}
+                      </Text>
+                      {hasBookmark && (
+                        <Bookmark
+                          size={16}
+                          color={colors.primary}
+                          fill={colors.primary}
+                          style={{ marginTop: 20 }}
+                        />
+                      )}
+                    </View>
+                    <Text
+                      style={[
+                        styles.surahNameEnglish,
+                        { color: colors.mutedForeground },
+                      ]}
+                    >
+                      {surah.englishName}
+                    </Text>
+                    <View style={styles.surahMeta}>
+                      <View
+                        style={[
+                          styles.revelationBadge,
+                          {
+                            backgroundColor:
+                              surah.revelationType === 'Meccan'
+                                ? colors.chart3 + '40'
+                                : colors.chart1 + '40',
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.revelationText,
+                            {
+                              color:
+                                surah.revelationType === 'Meccan'
+                                  ? '#B45309'
+                                  : colors.primary,
+                            },
+                          ]}
+                        >
+                          {surah.revelationType === 'Meccan'
+                            ? t.meccan
+                            : t.medinan}
+                        </Text>
+                      </View>
+                      <Text
+                        style={[
+                          styles.verseCount,
+                          { color: colors.mutedForeground },
+                        ]}
+                      >
+                        • {surah.numberOfAyahs} {t.versesLabel || 'verses'}
+                      </Text>
+                    </View>
+
+                    {/* Progress Bar */}
+                    {lastRead && lastRead.ayahNumber > 0 && (
+                      <View style={styles.progressContainer}>
+                        <Progress
+                          value={
+                            (lastRead.ayahNumber / surah.numberOfAyahs) * 100
+                          }
+                        />
+                        <Text
+                          style={[
+                            styles.progressText,
+                            { color: colors.mutedForeground },
+                          ]}
+                        >
+                          Ayah {lastRead.ayahNumber + 1} of{' '}
+                          {surah.numberOfAyahs}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </Card>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    );
+  };
+
+  const renderBookmarksTab = () => {
     if (bookmarksLoading) {
       return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator color={colors.primary} />
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       );
     }
 
-    if (!bookmarks.length) {
+    if (bookmarks.length === 0) {
       return (
-        <View style={styles.emptyState}>
+        <View style={styles.emptyContainer}>
           <View
             style={[
-              styles.emptyBadge,
-              { backgroundColor: `${colors.primary}15` },
+              styles.emptyIconContainer,
+              { backgroundColor: colors.muted },
             ]}
           >
-            <Bookmark size={28} color={colors.primary} />
+            <Bookmark size={40} color={colors.mutedForeground} />
           </View>
           <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
-            {t.noBookmarksTitle}
+            No Bookmarks Yet
           </Text>
           <Text
             style={[styles.emptySubtitle, { color: colors.mutedForeground }]}
           >
-            {t.noBookmarksSubtitle}
+            Bookmark verses as you read to save them here
           </Text>
         </View>
       );
     }
 
     return (
-      <FlatList
-        data={bookmarks}
-        keyExtractor={item => `${item.surahNumber}-${item.ayahNumber}`}
-        renderItem={renderBookmark}
-        contentContainerStyle={styles.sectionListContent}
-      />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {bookmarks.map((bookmark, index) => {
+          const surah = surahs.find(s => s.number === bookmark.surahNumber);
+
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleBookmarkSelect(bookmark)}
+              activeOpacity={0.7}
+            >
+              <Card style={styles.bookmarkCard}>
+                <View style={styles.bookmarkContent}>
+                  <View
+                    style={[
+                      styles.bookmarkNumberCircle,
+                      { backgroundColor: colors.primary },
+                    ]}
+                  >
+                    <Text style={styles.bookmarkNumberText}>
+                      {bookmark.surahNumber}
+                    </Text>
+                  </View>
+                  <View style={styles.bookmarkInfo}>
+                    <Text
+                      style={[
+                        styles.bookmarkSurahName,
+                        { color: colors.foreground },
+                      ]}
+                    >
+                      {bookmark.surahNameArabic}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.bookmarkSurahEnglish,
+                        { color: colors.mutedForeground },
+                      ]}
+                    >
+                      {bookmark.surahName} • Ayah {bookmark.ayahNumber}
+                    </Text>
+                  </View>
+                  <ChevronRight size={20} color={colors.mutedForeground} />
+                </View>
+              </Card>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
     );
   };
 
   return (
     <SafeAreaView
-      edges={['left', 'right']}
       style={[styles.container, { backgroundColor: colors.background }]}
+      edges={['top']}
     >
+      {/* Header */}
       <View
         style={[
           styles.header,
-          {
-            paddingTop: insets.top + spacing.md,
-          },
+          { backgroundColor: colors.card, borderBottomColor: colors.border },
         ]}
       >
-        <GradientBackground
-          colors={HEADER_GRADIENT}
-          style={styles.gredient}
-          opacity={1}
-        />
-
-        <View style={styles.headerTopRow}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            activeOpacity={0.7}
-            style={[styles.backButton, { backgroundColor: `${colors.card}AA` }]}
+        <Button
+          variant="ghost"
+          size="icon"
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <ArrowLeft size={24} color={colors.foreground} />
+        </Button>
+        <View style={styles.headerContent}>
+          <Text style={[styles.headerTitle, { color: colors.foreground }]}>
+            {t.quranReading}
+          </Text>
+          <Text
+            style={[styles.headerSubtitle, { color: colors.mutedForeground }]}
           >
-            <ArrowLeft
-              size={20}
-              color={colors.primary}
-              style={isRTL ? styles.flip : undefined}
-            />
-          </TouchableOpacity>
-          <View style={styles.headerText}>
-            <Text style={[styles.headerTitle, { color: colors.primary }]}>
-              {t.quranLibrary}
-            </Text>
-            <Text
-              style={[styles.headerSubtitle, { color: colors.mutedForeground }]}
-            >
-              {t.quranLibrarySubtitle}
-            </Text>
-          </View>
+            {activeTab === 'surah' && (t.selectSurah || 'Select a Surah')}
+            {activeTab === 'bookmarks' && 'Your Saved Content'}
+          </Text>
         </View>
-
-        <Card
-          style={[styles.searchCard, { backgroundColor: `${colors.card}F5` }]}
-        >
-          <View style={styles.searchRow}>
-            <Search size={18} color={colors.mutedForeground} />
-            <Input
-              value={query}
-              onChangeText={setQuery}
-              placeholder={t.searchSurah}
-              style={[
-                styles.searchInput,
-                { textAlign: isRTL ? 'right' : 'left', borderWidth: 0 },
-              ]}
-            />
-          </View>
-        </Card>
       </View>
 
-      <View style={styles.tabsWrapper}>
-        <Tabs
-          value={activeTab}
-          onValueChange={value => setActiveTab(value as typeof activeTab)}
+      {/* Tabs */}
+      <View
+        style={[
+          styles.tabsContainer,
+          { backgroundColor: colors.card, borderBottomColor: colors.border },
+        ]}
+      >
+        <TouchableOpacity
+          style={[
+            styles.tab,
+            activeTab === 'surah' && [
+              styles.activeTab,
+              { backgroundColor: colors.primary },
+            ],
+          ]}
+          onPress={() => setActiveTab('surah')}
         >
-          <TabsList style={styles.tabsList}>
-            <TabsTrigger value="surah">
-              <Text style={styles.tabLabel}>{t.surahTabLabel}</Text>
-            </TabsTrigger>
-            <TabsTrigger value="saved">
-              <Text style={styles.tabLabel}>{t.savedTabLabel}</Text>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+          <BookOpen
+            size={16}
+            color={activeTab === 'surah' ? '#fff' : colors.mutedForeground}
+          />
+          <Text
+            style={[
+              styles.tabText,
+              {
+                color: activeTab === 'surah' ? '#fff' : colors.mutedForeground,
+              },
+            ]}
+          >
+            Surah
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.tab,
+            activeTab === 'bookmarks' && [
+              styles.activeTab,
+              { backgroundColor: colors.primary },
+            ],
+          ]}
+          onPress={() => setActiveTab('bookmarks')}
+        >
+          <Bookmark
+            size={16}
+            color={activeTab === 'bookmarks' ? '#fff' : colors.mutedForeground}
+          />
+          <Text
+            style={[
+              styles.tabText,
+              {
+                color:
+                  activeTab === 'bookmarks' ? '#fff' : colors.mutedForeground,
+              },
+            ]}
+          >
+            Saved
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.contentWrapper}>{renderContent()}</View>
+      {/* Tab Content */}
+      {activeTab === 'surah' && renderSurahTab()}
+      {activeTab === 'bookmarks' && renderBookmarksTab()}
     </SafeAreaView>
   );
 };
@@ -537,198 +475,209 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingBottom: spacing.xxl * 2,
-    paddingHorizontal: spacing.lg,
-    borderBottomLeftRadius: 48,
-    borderBottomRightRadius: 48,
-    marginBottom: 10,
-  },
-  gredient: {
-    borderBottomLeftRadius: 48,
-    borderBottomRightRadius: 48,
-    height: 220,
-  },
-  headerTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    columnGap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginRight: spacing.md,
   },
-  headerText: {
+  headerContent: {
     flex: 1,
-    rowGap: spacing.xs,
   },
   headerTitle: {
-    fontSize: fontSize['2xl'],
-    fontWeight: fontWeight.semibold,
+    fontSize: fontSize.xl,
+    fontWeight: '600',
   },
   headerSubtitle: {
     fontSize: fontSize.sm,
+    marginTop: 2,
   },
-  searchCard: {
-    marginTop: spacing.lg,
-    paddingVertical: spacing.sm,
+  tabsContainer: {
+    flexDirection: 'row',
     paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    gap: spacing.xs,
   },
-  searchRow: {
+  tab: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    columnGap: spacing.sm,
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.xl,
+    gap: spacing.xs,
   },
-  searchInput: {
-    flex: 1,
+  activeTab: {
+    borderRadius: borderRadius.xl,
+  },
+  tabText: {
     fontSize: fontSize.sm,
-    backgroundColor: 'transparent',
+    fontWeight: '500',
   },
-  tabsWrapper: {
-    paddingHorizontal: spacing.lg,
-    marginTop: -spacing.lg,
-  },
-  tabsList: {
-    width: '100%',
-  },
-  tabLabel: {
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.medium,
-  },
-  contentWrapper: {
+  scrollView: {
     flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
   },
-  sectionListContent: {
-    paddingBottom: spacing.xl * 3,
-    rowGap: spacing.md,
+  scrollContent: {
+    padding: spacing.lg,
+    gap: spacing.md,
   },
-  sectionTitle: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
-    marginBottom: spacing.sm,
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   surahCard: {
-    padding: spacing.md,
-    borderWidth: 0,
+    marginBottom: spacing.md,
   },
-  surahRow: {
-    alignItems: 'center',
-    columnGap: spacing.md,
+  lockedCard: {
+    opacity: 0.75,
   },
-  badge: {
-    width: 48,
-    height: 48,
+  continueBadge: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    backgroundColor: '#7ec4cf',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
     borderRadius: borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+    zIndex: 1,
   },
-  badgeText: {
+  continueBadgeText: {
+    color: '#fff',
+    fontSize: fontSize.xs,
+    fontWeight: '600',
+  },
+  surahCardContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+  },
+  surahNumberContainer: {
+    position: 'relative',
+  },
+  surahNumberCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  surahNumberText: {
+    color: '#fff',
     fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
+    fontWeight: '600',
+  },
+  lockBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#6B7280',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   surahInfo: {
     flex: 1,
-    rowGap: spacing.xs,
+  },
+  surahNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.xs,
   },
   surahNameArabic: {
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.semibold,
+    fontWeight: '600',
+    flex: 1,
   },
   surahNameEnglish: {
     fontSize: fontSize.sm,
+    marginBottom: spacing.xs,
   },
-  metaRow: {
+  surahMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    columnGap: spacing.xs,
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
   },
-  metaText: {
+  revelationBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: borderRadius.full,
+  },
+  revelationText: {
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.medium,
+    fontWeight: '500',
   },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#d1d5db',
+  verseCount: {
+    fontSize: fontSize.xs,
   },
-  progressRow: {
+  progressContainer: {
+    marginTop: spacing.sm,
+  },
+  progressText: {
+    fontSize: fontSize.xs,
     marginTop: spacing.xs,
-    rowGap: spacing.xs,
-  },
-  progressBar: {
-    height: 6,
-  },
-  progressLabel: {
-    fontSize: fontSize.xs,
   },
   bookmarkCard: {
-    padding: spacing.md,
-    borderWidth: 0,
+    marginBottom: spacing.md,
   },
-  bookmarkRow: {
+  bookmarkContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    columnGap: spacing.md,
+    gap: spacing.md,
   },
-  bookmarkBadge: {
+  bookmarkNumberCircle: {
     width: 40,
     height: 40,
-    borderRadius: borderRadius.full,
-    alignItems: 'center',
+    borderRadius: 20,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookmarkNumberText: {
+    color: '#fff',
+    fontSize: fontSize.sm,
+    fontWeight: '600',
   },
   bookmarkInfo: {
     flex: 1,
-    rowGap: spacing.xs,
   },
-  bookmarkSurah: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
+  bookmarkSurahName: {
+    fontSize: fontSize.base,
+    fontWeight: '600',
+    marginBottom: spacing.xs,
   },
-  bookmarkSubtitle: {
+  bookmarkSurahEnglish: {
     fontSize: fontSize.sm,
   },
-  loadingContainer: {
+  emptyContainer: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    rowGap: spacing.md,
-  },
-  loadingText: {
-    fontSize: fontSize.sm,
-  },
-  errorText: {
-    fontSize: fontSize.sm,
-    textAlign: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  emptyState: {
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.xl * 3,
-    rowGap: spacing.md,
+    padding: spacing.xl,
   },
-  emptyBadge: {
-    width: 64,
-    height: 64,
-    borderRadius: borderRadius.full,
-    alignItems: 'center',
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
   },
   emptyTitle: {
     fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
   },
   emptySubtitle: {
     fontSize: fontSize.sm,
     textAlign: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  flip: {
-    transform: [{ scaleX: -1 }],
   },
 });

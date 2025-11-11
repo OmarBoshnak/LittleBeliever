@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BOOKMARK_STORAGE_KEY = '@littlebeliever:quran-bookmarks';
 const PROGRESS_STORAGE_KEY = '@littlebeliever:quran-progress';
+const LEARNING_PROGRESS_STORAGE_KEY = '@littlebeliever:quran-learning-progress';
 
 export interface QuranBookmark {
   surahNumber: number;
@@ -18,6 +19,14 @@ export interface SurahProgressEntry {
 }
 
 export type SurahProgressMap = Record<number, SurahProgressEntry>;
+
+export interface LearningProgressEntry {
+  lastAyah: number;
+  completedAyahs: number[];
+  updatedAt: number;
+}
+
+export type LearningProgressMap = Record<number, LearningProgressEntry>;
 
 const parseJson = <T>(value: string | null): T | null => {
   if (!value) {
@@ -35,19 +44,23 @@ const parseJson = <T>(value: string | null): T | null => {
 export const useQuranBookmarks = () => {
   const [bookmarks, setBookmarks] = useState<QuranBookmark[]>([]);
   const [progress, setProgress] = useState<SurahProgressMap>({});
+  const [learningProgress, setLearningProgress] = useState<LearningProgressMap>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [bookmarkValue, progressValue] = await Promise.all([
+        const [bookmarkValue, progressValue, learningProgressValue] = await Promise.all([
           AsyncStorage.getItem(BOOKMARK_STORAGE_KEY),
           AsyncStorage.getItem(PROGRESS_STORAGE_KEY),
+          AsyncStorage.getItem(LEARNING_PROGRESS_STORAGE_KEY),
         ]);
         const bookmarkList = parseJson<QuranBookmark[]>(bookmarkValue) ?? [];
         const progressMap = parseJson<SurahProgressMap>(progressValue) ?? {};
+        const learningProgressMap = parseJson<LearningProgressMap>(learningProgressValue) ?? {};
         setBookmarks(bookmarkList);
         setProgress(progressMap);
+        setLearningProgress(learningProgressMap);
       } catch (error) {
         console.warn("Failed to load Qur'an bookmarks", error);
       } finally {
@@ -58,25 +71,29 @@ export const useQuranBookmarks = () => {
   }, []);
 
   const persistBookmarks = useCallback(async (next: QuranBookmark[]) => {
-    setBookmarks(next);
+    // Don't update state here - state should be updated optimistically before calling this
     try {
       await AsyncStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify(next));
     } catch (error) {
       console.warn("Failed to persist Qur'an bookmarks", error);
+      throw error; // Re-throw to allow rollback
     }
   }, []);
 
   const persistProgress = useCallback(async (next: SurahProgressMap) => {
+    // Update state immediately (optimistic update)
     setProgress(next);
     try {
       await AsyncStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(next));
     } catch (error) {
       console.warn("Failed to persist Qur'an progress", error);
+      // Progress updates are less critical, so we don't rollback
     }
   }, []);
 
   const toggleBookmark = useCallback(
     (bookmark: Omit<QuranBookmark, 'createdAt'>) => {
+      // Optimistic update - update UI immediately
       const exists = bookmarks.some(
         item =>
           item.surahNumber === bookmark.surahNumber &&
@@ -91,7 +108,14 @@ export const useQuranBookmarks = () => {
               item.ayahNumber === bookmark.ayahNumber
             ),
         );
-        persistBookmarks(filtered);
+        // Update state immediately
+        setBookmarks(filtered);
+        // Persist in background (non-blocking)
+        persistBookmarks(filtered).catch(err => {
+          console.warn('Failed to persist bookmark removal:', err);
+          // Rollback on error
+          setBookmarks(bookmarks);
+        });
         return;
       }
 
@@ -102,7 +126,14 @@ export const useQuranBookmarks = () => {
         },
         ...bookmarks,
       ];
-      persistBookmarks(next);
+      // Update state immediately
+      setBookmarks(next);
+      // Persist in background (non-blocking)
+      persistBookmarks(next).catch(err => {
+        console.warn('Failed to persist bookmark:', err);
+        // Rollback on error
+        setBookmarks(bookmarks);
+      });
     },
     [bookmarks, persistBookmarks],
   );
@@ -120,6 +151,7 @@ export const useQuranBookmarks = () => {
 
   const setLastRead = useCallback(
     (surahNumber: number, ayahNumber: number) => {
+      // Optimistic update - update UI immediately
       const next: SurahProgressMap = {
         ...progress,
         [surahNumber]: {
@@ -127,9 +159,14 @@ export const useQuranBookmarks = () => {
           updatedAt: Date.now(),
         },
       };
-      persistProgress(next);
+      // Update state immediately
+      setProgress(next);
+      // Persist in background
+      AsyncStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(next)).catch(err => {
+        console.warn('Failed to persist progress:', err);
+      });
     },
-    [progress, persistProgress],
+    [progress],
   );
 
   const clearProgress = useCallback(
@@ -155,14 +192,62 @@ export const useQuranBookmarks = () => {
     }, {});
   }, [bookmarks, getBookmarkKey]);
 
+  const setLearningProgressForSurah = useCallback(
+    async (surahNumber: number, lastAyah: number, completedAyahs: number[]) => {
+      const next: LearningProgressMap = {
+        ...learningProgress,
+        [surahNumber]: {
+          lastAyah,
+          completedAyahs,
+          updatedAt: Date.now(),
+        },
+      };
+      setLearningProgress(next);
+      try {
+        await AsyncStorage.setItem(LEARNING_PROGRESS_STORAGE_KEY, JSON.stringify(next));
+      } catch (error) {
+        console.warn('Failed to persist learning progress:', error);
+      }
+    },
+    [learningProgress],
+  );
+
+  const getLearningProgress = useCallback(
+    (surahNumber: number): LearningProgressEntry | null => {
+      return learningProgress[surahNumber] || null;
+    },
+    [learningProgress],
+  );
+
+  const clearLearningProgress = useCallback(
+    async (surahNumber: number) => {
+      if (!(surahNumber in learningProgress)) {
+        return;
+      }
+      const rest = { ...learningProgress };
+      delete rest[surahNumber];
+      setLearningProgress(rest);
+      try {
+        await AsyncStorage.setItem(LEARNING_PROGRESS_STORAGE_KEY, JSON.stringify(rest));
+      } catch (error) {
+        console.warn('Failed to clear learning progress:', error);
+      }
+    },
+    [learningProgress],
+  );
+
   return {
     loading,
     bookmarks,
     bookmarkMap,
     progress,
+    learningProgress,
     toggleBookmark,
     removeBookmark,
     setLastRead,
     clearProgress,
+    setLearningProgressForSurah,
+    getLearningProgress,
+    clearLearningProgress,
   };
 };

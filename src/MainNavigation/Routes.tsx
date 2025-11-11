@@ -1,6 +1,3 @@
-import { QuranIndexScreen } from '../screen/HomeScreen/Quran/QuranIndexScreen.tsx';
-import { QuranReaderScreen } from '../screen/HomeScreen/Quran/QuranReadingScreen.tsx';
-
 export const Routes = {
   SplashScreen: 'SplashScreen',
   LanguageThemeScreen: 'LanguageThemeScreen',

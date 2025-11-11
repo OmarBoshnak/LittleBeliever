@@ -16,11 +16,17 @@ import { configureGoogleSignIn } from './src/firebase/config.ts';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store.ts';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { setupTrackPlayer } from './src/service/trackPlayerService.ts';
 
 const App = () => {
   useEffect(() => {
     // Initialize Google Sign-In when app starts
     configureGoogleSignIn();
+
+    // Initialize Track Player
+    setupTrackPlayer().catch(error => {
+      console.error('Failed to setup Track Player:', error);
+    });
   }, []);
 
   return (
